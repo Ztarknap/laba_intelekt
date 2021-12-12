@@ -92,9 +92,10 @@ if __name__ == "__main__":
     cn = 0
     count = 0
     for val in predictionsCi:
+        #q = labelsCI[cn]
         if val == labelsCi[cn]:
-            cn = cn + 1
             count = count + 1
+        cn = cn + 1
     
     summary = count/100
     q = 1
