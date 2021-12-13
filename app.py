@@ -3,7 +3,7 @@ import math
 import numpy as np
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
-
+from sklearn.preprocessing import StandardScaler
 
 
 
@@ -11,6 +11,7 @@ if __name__ == "__main__":
 
 
 #--------------------------------------------------------------KDD cup-------------------------------------------------------
+    scaler = StandardScaler()  
 
     df_kdd = pandas.read_csv('kdd-5classes.csv')
     df_new = pandas.read_csv('new 1-3.csv')
@@ -46,21 +47,24 @@ if __name__ == "__main__":
                 t = 2
 
     df_united = df_united2.iloc[0:9052]
+    scaler.fit(df_united)
+    df_united= scaler.transform(df_united)
     clf.fit(df_united, labels)
     #df_test_new = df_united2.iloc[9052:14052]
     df_test_new = df_united2.iloc[0:9052]
+    df_test_new = scaler.transform(df_test_new)
     predictions = clf.predict(df_test_new)
-    #cn = 0
-    #count = 0
-    #for val in predictions:
-        #if val == labels[cn]:
-            #cn = cn + 1
-            #count = count + 1
+    cn = 0
+    count = 0
+    for val in predictions:
+        if val == labels[cn]:
+            count = count + 1
+        cn = cn + 1
     
-    #summary = count/9051
-    #q = 1
+    summary = count/9051
+    q = 1
 #--------------------------------------------------------------CICID-------------------------------------------------------
-
+    scaler1 = StandardScaler()  
     df_trainCi = pandas.read_csv('newdataset.csv')
     df_testCi = pandas.read_csv('test(100).csv')
     
@@ -71,21 +75,24 @@ if __name__ == "__main__":
     df_trainCi.drop(columns = ['Label'], inplace = True)
  
     t = 0
-    clfCi = RandomForestClassifier(
-	bootstrap=True, class_weight=None, criterion='gini',
-	max_depth=17, max_features=10, max_leaf_nodes=None,
-	min_impurity_decrease=0.0, min_impurity_split=None,
-	min_samples_leaf=3, min_samples_split=2,
-	min_weight_fraction_leaf=0.0, n_estimators=50,
-	n_jobs=None, oob_score=False, random_state=1, verbose=0,
-	warm_start=False)
+    #clfCi = RandomForestClassifier(
+	#bootstrap=True, class_weight=None, criterion='gini',
+	#max_depth=17, max_features=10, max_leaf_nodes=None,
+	#min_impurity_decrease=0.0, min_impurity_split=None,
+	#min_samples_leaf=3, min_samples_split=2,
+	#min_weight_fraction_leaf=0.0, n_estimators=50,
+	#n_jobs=None, oob_score=False, random_state=1, verbose=0,
+	#warm_start=False)
     #for value in df_united2.iterrows():
-
+    clfCi = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 2), random_state=1)
     #print()
         #if (math.isnan(value[0]) or math.isinf(value[0])):
             #print(value[0])
             #t = 3
+    scaler1.fit(df_trainCi)
+    df_trainCi= scaler1.transform(df_trainCi)
     clfCi.fit(df_trainCi, labelsCi)
+    #df_testCI = scaler1.transform(df_testCI)
     predictionsCi = clfCi.predict(df_trainCi)
 
 
